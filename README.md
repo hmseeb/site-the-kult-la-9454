@@ -37,6 +37,7 @@ python3 -m http.server 8000
 ├── contact.html
 ├── css/styles.css
 ├── js/main.js
+├── api/ghl-lead.js      # GoHighLevel form handler (serverless function)
 ├── favicon.svg          # placeholder mark — swap for real brand favicon
 ├── robots.txt
 └── sitemap.xml
@@ -47,8 +48,11 @@ python3 -m http.server 8000
 - Responsive, mobile-first dark editorial design
 - Sticky header with accessible mobile nav, plus a sticky click-to-call bar on phones
 - Click-to-call links on every page (`tel:+14243554446`)
-- Quote form with client-side validation, honeypot spam trap, and a pre-filled
-  `mailto:` handoff (static hosting, so there is no server-side handler)
+- Quote form with client-side validation, honeypot spam trap, an inline thank-you
+  message, and a GoHighLevel handoff (`api/ghl-lead.js`) that creates or updates the
+  contact in sub-account `PkdMCggAN3lerFXTcCCW` with first/last name, phone, email and
+  the message (saved as a note), sets the "Lead Source" (Website) and "Website Form"
+  custom fields, and adds the `website-lead` tag
 - Service cards deep-link to the form with the service pre-selected
   (e.g. `contact.html?service=Web%20Design%20%26%20Development`)
 - Semantic HTML, skip link, ARIA labelling, visible focus states
@@ -61,5 +65,8 @@ python3 -m http.server 8000
 1. Replace `favicon.svg` with the real brand favicon.
 2. Update the `https://thekultla.com/` canonical, Open Graph and sitemap URLs if the
    production domain differs.
-3. Optional: point the quote form at a form backend instead of the `mailto:` handoff
-   (see `initForm()` in `js/main.js`).
+3. Set the `GHL_API_KEY` environment variable in the hosting dashboard to a
+   GoHighLevel Private Integration token for sub-account `PkdMCggAN3lerFXTcCCW`
+   (scopes: `contacts.write`, `contacts.readonly`, `locations/customFields.readonly`).
+   Until it is set, form submissions fall back to the pre-filled `mailto:` handoff.
+   Optionally override the sub-account with `GHL_LOCATION_ID`.

@@ -6,6 +6,7 @@
   'use strict';
 
   var BUSINESS_EMAIL = 'vikvdesign@gmail.com';
+  var LEAD_ENDPOINT = '/api/ghl-lead';
 
   /* ----------------------------------------------------------------------
      Mobile navigation
@@ -91,8 +92,10 @@
 
   /* ----------------------------------------------------------------------
      Quote / contact form
-     No backend is available on a static site, so a validated submission is
-     handed off to the visitor's email client, pre-filled and ready to send.
+     A validated submission is posted to /api/ghl-lead, which creates or
+     updates the contact in the GoHighLevel sub-account (tagged website-lead).
+     If that endpoint is unavailable, the submission falls back to the
+     pre-filled email handoff so no enquiry is ever lost.
      ---------------------------------------------------------------------- */
   function initForm() {
     var form = document.getElementById('quote-form');
@@ -183,23 +186,15 @@
       });
     });
 
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
+    var submitBtn = form.querySelector('[type="submit"]');
+    var submitLabel = submitBtn ? submitBtn.textContent : '';
 
-      // Silently ignore bot submissions.
-      if (honeypot && honeypot.value) return;
+    function get(name) {
+      var field = form.elements[name];
+      return field ? field.value.trim() : '';
+    }
 
-      if (!validate()) {
-        var firstBad = form.querySelector('[aria-invalid="true"]');
-        if (firstBad) firstBad.focus();
-        return;
-      }
-
-      var get = function (name) {
-        var field = form.elements[name];
-        return field ? field.value.trim() : '';
-      };
-
+    function mailtoHref() {
       var subject = 'Project enquiry — ' + get('service') + ' — ' + get('name');
 
       var lines = [
@@ -217,18 +212,101 @@
         '— Sent from thekultla.com'
       ];
 
-      var href = 'mailto:' + BUSINESS_EMAIL +
+      return 'mailto:' + BUSINESS_EMAIL +
         '?subject=' + encodeURIComponent(subject) +
         '&body=' + encodeURIComponent(lines.join('\n'));
+    }
 
+    function thankYou(firstName) {
       showStatus(
-        'Thanks, ' + get('name').split(' ')[0] + '! Your email app is opening with the details filled in — ' +
-        'just hit send and we\'ll reply within one business day. In a hurry? Call (424) 355-4446.',
+        'Thanks' + (firstName ? ', ' + firstName : '') + '! Your details are with us — ' +
+        'we\'ll reply within one business day. In a hurry? Call (424) 355-4446.',
         'success'
       );
+    }
 
-      window.location.href = href;
-      form.reset();
+    function setBusy(busy) {
+      if (!submitBtn) return;
+      submitBtn.disabled = busy;
+      submitBtn.textContent = busy ? 'Sending…' : submitLabel;
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      // Silently ignore bot submissions.
+      if (honeypot && honeypot.value) return;
+
+      if (!validate()) {
+        var firstBad = form.querySelector('[aria-invalid="true"]');
+        if (firstBad) firstBad.focus();
+        return;
+      }
+
+      var firstName = get('name').split(' ')[0];
+
+      var payload = {
+        formName: form.getAttribute('data-form-name') || form.id || 'Website Form',
+        name: get('name'),
+        email: get('email'),
+        phone: get('phone'),
+        company: get('company'),
+        service: get('service'),
+        budget: get('budget'),
+        timeline: get('timeline'),
+        message: get('message'),
+        website: honeypot ? honeypot.value : '',
+        pageUrl: window.location.href
+      };
+
+      // No fetch (very old browser) — keep the email handoff.
+      if (typeof window.fetch !== 'function') {
+        thankYou(firstName);
+        window.location.href = mailtoHref();
+        form.reset();
+        return;
+      }
+
+      setBusy(true);
+
+      fetch(LEAD_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (response) {
+        return response.json().catch(function () { return {}; }).then(function (data) {
+          return { ok: response.ok, status: response.status, data: data || {} };
+        });
+      }).then(function (result) {
+        setBusy(false);
+
+        if (result.ok) {
+          thankYou(firstName);
+          form.reset();
+          return;
+        }
+
+        // CRM not wired up on this deployment — fall back to the email handoff.
+        if (result.status === 503 || result.status === 404 || result.status === 405) {
+          thankYou(firstName);
+          window.location.href = mailtoHref();
+          form.reset();
+          return;
+        }
+
+        showStatus(
+          'Sorry — something went wrong sending your details. Please email ' +
+          BUSINESS_EMAIL + ' or call (424) 355-4446 and we\'ll pick it up right away.',
+          'error'
+        );
+      }).catch(function () {
+        setBusy(false);
+        showStatus(
+          'Sorry — something went wrong sending your details. Please email ' +
+          BUSINESS_EMAIL + ' or call (424) 355-4446 and we\'ll pick it up right away.',
+          'error'
+        );
+      });
     });
   }
 

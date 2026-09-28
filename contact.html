@@ -177,7 +177,11 @@
           <span style="color:var(--accent-2)">*</span> are required.
         </p>
 
-        <form id="quote-form" data-form-name="Quote Request Form" novalidate>
+        <form id="quote-form" data-form-name="Quote request" method="POST" action="https://vision.leadrai.com/api/forms/20b4ddfcb5b19681843dfc18c63f4ee0" novalidate>
+          <input type="hidden" name="_form" value="Quote request">
+          <input type="hidden" name="_page" value="">
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none">
+
           <div class="form-grid form-grid--2">
             <div class="field">
               <label for="name">Your name <span class="req">*</span></label>
@@ -187,7 +191,7 @@
 
             <div class="field">
               <label for="company">Business / brand</label>
-              <input type="text" id="company" name="company" autocomplete="organization" placeholder="Kult Coffee Co.">
+              <input type="text" id="company" name="Business / brand" autocomplete="organization" placeholder="Kult Coffee Co.">
               <span class="field__error" aria-live="polite"></span>
             </div>
           </div>
@@ -209,7 +213,7 @@
           <div class="form-grid" style="margin-top:1.05rem">
             <div class="field">
               <label for="service">What do you need? <span class="req">*</span></label>
-              <select id="service" name="service" required>
+              <select id="service" name="Service needed" required>
                 <option value="">Select a service…</option>
                 <option>Brand Identity &amp; Logo Design</option>
                 <option>Web Design &amp; Development</option>
@@ -226,7 +230,7 @@
           <div class="form-grid form-grid--2" style="margin-top:1.05rem">
             <div class="field">
               <label for="budget">Budget range</label>
-              <select id="budget" name="budget">
+              <select id="budget" name="Budget range">
                 <option value="">Prefer not to say</option>
                 <option>Under $1,000</option>
                 <option>$1,000 – $2,500</option>
@@ -240,7 +244,7 @@
 
             <div class="field">
               <label for="timeline">Ideal timeline</label>
-              <select id="timeline" name="timeline">
+              <select id="timeline" name="Ideal timeline">
                 <option value="">Flexible</option>
                 <option>ASAP — it's urgent</option>
                 <option>Within 2 weeks</option>
@@ -255,7 +259,7 @@
           <div class="form-grid" style="margin-top:1.05rem">
             <div class="field">
               <label for="message">Project details <span class="req">*</span></label>
-              <textarea id="message" name="message" placeholder="Tell us about your business, what you're launching, any deadlines, and links to work you like." required></textarea>
+              <textarea id="message" name="Project details" placeholder="Tell us about your business, what you're launching, any deadlines, and links to work you like." required></textarea>
               <span class="field__error" aria-live="polite"></span>
             </div>
           </div>
@@ -267,7 +271,7 @@
           </div>
 
           <label class="form-consent" for="consent" style="margin-top:1.3rem">
-            <input type="checkbox" id="consent" name="consent" required>
+            <input type="checkbox" id="consent" name="Consent to be contacted" value="Yes" required>
             <span>I agree to be contacted by The Kult LA about this enquiry. We never share your details with anyone.</span>
           </label>
 

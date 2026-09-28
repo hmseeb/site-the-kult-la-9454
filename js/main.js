@@ -6,7 +6,44 @@
   'use strict';
 
   var BUSINESS_EMAIL = 'vikvdesign@gmail.com';
-  var LEAD_ENDPOINT = '/api/ghl-lead';
+  var FORM_ENDPOINT = 'https://vision.leadrai.com/api/forms/20b4ddfcb5b19681843dfc18c63f4ee0';
+
+  /* ----------------------------------------------------------------------
+     Shared form status helper
+     ---------------------------------------------------------------------- */
+  function showStatus(message, kind) {
+    var status = document.getElementById('form-status');
+    if (!status) return;
+    status.textContent = message;
+    status.className = 'form-status is-visible ' + (kind === 'error' ? 'is-error' : 'is-success');
+    status.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  }
+
+  function thankYou(firstName) {
+    showStatus(
+      'Thanks' + (firstName ? ', ' + firstName : '') + '! Your details are with us — ' +
+      'we\'ll reply within one business day. In a hurry? Call (424) 355-4446.',
+      'success'
+    );
+  }
+
+  /* ----------------------------------------------------------------------
+     Hidden _page field — so visitors come back to the right page
+     ---------------------------------------------------------------------- */
+  function initPageFields() {
+    var fields = document.querySelectorAll('input[name="_page"]');
+    for (var i = 0; i < fields.length; i++) fields[i].value = window.location.href;
+  }
+
+  /* ----------------------------------------------------------------------
+     Plain (no-JavaScript) submissions return with ?submitted=1
+     ---------------------------------------------------------------------- */
+  function initSubmittedNotice() {
+    if (!window.location.search) return;
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('submitted') !== '1') return;
+    thankYou('');
+  }
 
   /* ----------------------------------------------------------------------
      Mobile navigation
@@ -92,17 +129,21 @@
 
   /* ----------------------------------------------------------------------
      Quote / contact form
-     A validated submission is posted to /api/ghl-lead, which creates or
-     updates the contact in the GoHighLevel sub-account (tagged website-lead).
-     If that endpoint is unavailable, the submission falls back to the
-     pre-filled email handoff so no enquiry is ever lost.
+     A validated submission is posted with fetch() to the LeadrVision forms
+     endpoint (the same URL as the form's action attribute), which answers
+     with {"ok": true}. Without JavaScript the plain HTML POST still works and
+     the visitor returns to this page with ?submitted=1.
      ---------------------------------------------------------------------- */
   function initForm() {
     var form = document.getElementById('quote-form');
     if (!form) return;
 
-    var status = document.getElementById('form-status');
     var honeypot = form.querySelector('.honeypot input');
+    var gotcha = form.querySelector('input[name="_gotcha"]');
+
+    function field(id) {
+      return form.querySelector('#' + id);
+    }
 
     function setError(field, message) {
       var wrap = field.closest('.field');
@@ -113,13 +154,6 @@
       } else {
         field.removeAttribute('aria-invalid');
       }
-    }
-
-    function showStatus(message, kind) {
-      if (!status) return;
-      status.textContent = message;
-      status.className = 'form-status is-visible ' + (kind === 'error' ? 'is-error' : 'is-success');
-      status.setAttribute('role', kind === 'error' ? 'alert' : 'status');
     }
 
     function validEmail(value) {
@@ -142,35 +176,35 @@
       ];
 
       required.forEach(function (rule) {
-        var field = form.elements[rule.id];
-        if (!field) return;
-        if (!field.value.trim()) {
-          setError(field, rule.message);
+        var input = field(rule.id);
+        if (!input) return;
+        if (!input.value.trim()) {
+          setError(input, rule.message);
           ok = false;
         } else {
-          setError(field, '');
+          setError(input, '');
         }
       });
 
-      var email = form.elements.email;
+      var email = field('email');
       if (email && email.value.trim() && !validEmail(email.value.trim())) {
         setError(email, 'That email address does not look right.');
         ok = false;
       }
 
-      var phone = form.elements.phone;
+      var phone = field('phone');
       if (phone && phone.value.trim() && !validPhone(phone.value.trim())) {
         setError(phone, 'Please enter a valid phone number, or leave it blank.');
         ok = false;
       }
 
-      var message = form.elements.message;
+      var message = field('message');
       if (message && message.value.trim() && message.value.trim().length < 12) {
         setError(message, 'A little more detail helps us quote accurately.');
         ok = false;
       }
 
-      var consent = form.elements.consent;
+      var consent = field('consent');
       if (consent && !consent.checked) {
         showStatus('Please confirm you agree to be contacted about your enquiry.', 'error');
         ok = false;
@@ -189,40 +223,9 @@
     var submitBtn = form.querySelector('[type="submit"]');
     var submitLabel = submitBtn ? submitBtn.textContent : '';
 
-    function get(name) {
-      var field = form.elements[name];
-      return field ? field.value.trim() : '';
-    }
-
-    function mailtoHref() {
-      var subject = 'Project enquiry — ' + get('service') + ' — ' + get('name');
-
-      var lines = [
-        'Name: ' + get('name'),
-        'Email: ' + get('email'),
-        'Phone: ' + (get('phone') || 'Not provided'),
-        'Company / brand: ' + (get('company') || 'Not provided'),
-        'Service needed: ' + get('service'),
-        'Budget range: ' + (get('budget') || 'Not specified'),
-        'Ideal timeline: ' + (get('timeline') || 'Not specified'),
-        '',
-        'Project details:',
-        get('message'),
-        '',
-        '— Sent from thekultla.com'
-      ];
-
-      return 'mailto:' + BUSINESS_EMAIL +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body=' + encodeURIComponent(lines.join('\n'));
-    }
-
-    function thankYou(firstName) {
-      showStatus(
-        'Thanks' + (firstName ? ', ' + firstName : '') + '! Your details are with us — ' +
-        'we\'ll reply within one business day. In a hurry? Call (424) 355-4446.',
-        'success'
-      );
+    function get(id) {
+      var input = field(id);
+      return input ? input.value.trim() : '';
     }
 
     function setBusy(busy) {
@@ -232,50 +235,51 @@
     }
 
     form.addEventListener('submit', function (event) {
-      event.preventDefault();
-
       // Silently ignore bot submissions.
-      if (honeypot && honeypot.value) return;
+      if ((honeypot && honeypot.value) || (gotcha && gotcha.value)) {
+        event.preventDefault();
+        return;
+      }
 
       if (!validate()) {
+        event.preventDefault();
         var firstBad = form.querySelector('[aria-invalid="true"]');
         if (firstBad) firstBad.focus();
         return;
       }
 
+      // No fetch (very old browser) — let the plain HTML POST go through.
+      if (typeof window.fetch !== 'function') return;
+
+      event.preventDefault();
+
       var firstName = get('name').split(' ')[0];
+      var consent = field('consent');
 
       var payload = {
-        formName: form.getAttribute('data-form-name') || form.id || 'Website Form',
+        _form: 'Quote request',
+        _page: window.location.href,
+        _gotcha: gotcha ? gotcha.value : '',
         name: get('name'),
         email: get('email'),
         phone: get('phone'),
-        company: get('company'),
-        service: get('service'),
-        budget: get('budget'),
-        timeline: get('timeline'),
-        message: get('message'),
-        website: honeypot ? honeypot.value : '',
-        pageUrl: window.location.href
+        'Business / brand': get('company'),
+        'Service needed': get('service'),
+        'Budget range': get('budget'),
+        'Ideal timeline': get('timeline'),
+        'Project details': get('message'),
+        'Consent to be contacted': consent && consent.checked ? 'Yes' : 'No'
       };
-
-      // No fetch (very old browser) — keep the email handoff.
-      if (typeof window.fetch !== 'function') {
-        thankYou(firstName);
-        window.location.href = mailtoHref();
-        form.reset();
-        return;
-      }
 
       setBusy(true);
 
-      fetch(LEAD_ENDPOINT, {
+      fetch(FORM_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       }).then(function (response) {
         return response.json().catch(function () { return {}; }).then(function (data) {
-          return { ok: response.ok, status: response.status, data: data || {} };
+          return { ok: response.ok && (data.ok !== false), data: data || {} };
         });
       }).then(function (result) {
         setBusy(false);
@@ -283,14 +287,7 @@
         if (result.ok) {
           thankYou(firstName);
           form.reset();
-          return;
-        }
-
-        // CRM not wired up on this deployment — fall back to the email handoff.
-        if (result.status === 503 || result.status === 404 || result.status === 405) {
-          thankYou(firstName);
-          window.location.href = mailtoHref();
-          form.reset();
+          initPageFields();
           return;
         }
 
@@ -335,8 +332,10 @@
     initYear();
     initReveal();
     initFaq();
+    initPageFields();
     initForm();
     initServicePreselect();
+    initSubmittedNotice();
   }
 
   if (document.readyState === 'loading') {

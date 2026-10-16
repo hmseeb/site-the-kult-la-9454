@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://thekultla.com/sitemap.xml
+Sitemap: https://site-the-kult-la-9454.vercel.app/sitemap.xml

@@ -1,0 +1,279 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+/*
+ * THE KULT LA — cinematic editorial design system.
+ * Near-black stage, bone type, oxide-red cinema accent, muted brass, amber.
+ * All colors in oklch. Never hardcode colors in components.
+ */
+
+@theme inline {
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+
+  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-bone: var(--bone);
+  --color-cream: var(--cream);
+  --color-charcoal: var(--charcoal);
+  --color-concrete: var(--concrete);
+  --color-brass: var(--brass);
+  --color-dark-brass: var(--dark-brass);
+  --color-amber: var(--amber);
+  --color-oxide: var(--oxide);
+}
+
+:root {
+  --radius: 3px;
+  --background: oklch(0.145 0.006 40);
+  --foreground: oklch(0.945 0.012 85);
+  --charcoal: oklch(0.205 0.008 45);
+  --concrete: oklch(0.38 0.008 60);
+  --bone: oklch(0.945 0.012 85);
+  --cream: oklch(0.9 0.02 82);
+  --oxide: oklch(0.46 0.16 28);
+  --brass: oklch(0.72 0.08 82);
+  --dark-brass: oklch(0.36 0.07 76);
+  --amber: oklch(0.79 0.15 72);
+
+  --card: oklch(0.185 0.007 45);
+  --card-foreground: var(--bone);
+  --popover: oklch(0.175 0.007 45);
+  --popover-foreground: var(--bone);
+  --primary: var(--oxide);
+  --primary-foreground: oklch(0.97 0.01 85);
+  --secondary: oklch(0.24 0.008 50);
+  --secondary-foreground: var(--bone);
+  --muted: oklch(0.24 0.008 50);
+  --muted-foreground: oklch(0.68 0.012 70);
+  --accent: var(--amber);
+  --accent-foreground: oklch(0.16 0.01 40);
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.97 0.01 85);
+  --border: oklch(0.995 0 0 / 12%);
+  --input: oklch(0.995 0 0 / 16%);
+  --ring: var(--brass);
+}
+
+/* Light editorial palette scoped to the Weddings event page */
+.weddings-light {
+  background-color: oklch(0.975 0.004 85);
+  color: oklch(0.2 0.01 45);
+  --background: oklch(0.975 0.004 85);
+
+  --foreground: oklch(0.2 0.01 45);
+  --charcoal: oklch(0.94 0.006 82);
+  --concrete: oklch(0.45 0.01 60);
+  --bone: oklch(0.2 0.01 45);
+  --cream: oklch(0.2 0.01 45);
+  --card: oklch(0.96 0.005 85);
+  --card-foreground: oklch(0.2 0.01 45);
+  --popover: oklch(0.97 0.005 85);
+  --popover-foreground: oklch(0.2 0.01 45);
+  --secondary: oklch(0.93 0.006 82);
+  --secondary-foreground: oklch(0.2 0.01 45);
+  --muted: oklch(0.93 0.006 82);
+  --muted-foreground: oklch(0.44 0.01 60);
+  --border: oklch(0.2 0.01 45 / 14%);
+  --input: oklch(0.2 0.01 45 / 22%);
+}
+
+/* Neutral light UI palette for the internal admin dashboard */
+.admin-light {
+  background-color: oklch(0.985 0 0);
+  color: oklch(0.21 0.01 260);
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.21 0.01 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.01 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.01 260);
+  --primary: oklch(0.45 0.14 25);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.95 0.005 260);
+  --secondary-foreground: oklch(0.25 0.01 260);
+  --muted: oklch(0.95 0.005 260);
+  --muted-foreground: oklch(0.48 0.01 260);
+  --accent: oklch(0.94 0.01 260);
+  --accent-foreground: oklch(0.25 0.01 260);
+  --brass: oklch(0.45 0.09 70);
+  --amber: oklch(0.55 0.13 60);
+  --bone: oklch(0.21 0.01 260);
+  --cream: oklch(0.21 0.01 260);
+  --border: oklch(0.21 0.01 260 / 14%);
+  --input: oklch(0.21 0.01 260 / 24%);
+  --ring: oklch(0.45 0.14 25);
+}
+
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 0.95;
+  }
+
+  ::selection {
+    background: var(--oxide);
+    color: var(--bone);
+  }
+}
+
+/* ---------- utilities ---------- */
+
+@utility label-xs {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+@utility section-number {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--concrete);
+}
+
+@utility grain {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.14;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@utility hairline {
+  border-top: 1px solid var(--color-border);
+}
+
+@utility film-veil {
+  background-image: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--background) 96%, transparent) 0%,
+    color-mix(in oklab, var(--background) 55%, transparent) 45%,
+    color-mix(in oklab, var(--background) 30%, transparent) 100%
+  );
+}
+
+@utility sweep {
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40%;
+    left: -60%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--amber) 12%, transparent),
+      transparent
+    );
+    animation: sweep-move 9s ease-in-out infinite;
+  }
+}
+
+@keyframes sweep-move {
+  0%,
+  60% {
+    left: -60%;
+  }
+  100% {
+    left: 120%;
+  }
+}
+
+@utility rise {
+  animation: rise-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Keeps a full-bleed photo hero cinematic even inside a light-themed page */
+.hero-dark {
+  color: oklch(0.945 0.012 85);
+  --background: oklch(0.145 0.006 40);
+  --foreground: oklch(0.945 0.012 85);
+  --bone: oklch(0.945 0.012 85);
+  --cream: oklch(0.9 0.02 82);
+  --muted-foreground: oklch(0.78 0.012 70);
+  --border: oklch(0.995 0 0 / 22%);
+}
+
+/* Hide the public chat widget inside the internal admin dashboard */
+html[data-admin="true"] chat-widget {
+  display: none !important;
+}
+
+/* Focused paid-search page: retain the venue palette without public-site distractions. */
+.rental-page { letter-spacing: 0; }
+.rental-page h1, .rental-page h2, .rental-page h3, .rental-page .display { letter-spacing: 0; }
+.rental-hero-veil {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--background) 94%, transparent), color-mix(in oklab, var(--background) 72%, transparent) 48%, color-mix(in oklab, var(--background) 15%, transparent)), linear-gradient(0deg, color-mix(in oklab, var(--background) 80%, transparent), transparent 65%);
+}
+.rental-mobile-bar { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+html[data-venue-rental="true"] chat-widget { display: none !important; }
+.rental-page select { color-scheme: dark; }
+.rental-page input[type="date"] { color-scheme: dark; }
+@media (prefers-reduced-motion: reduce) {
+  .rental-page *, .rental-page *::before, .rental-page *::after { animation: none !important; scroll-behavior: auto !important; }
+}

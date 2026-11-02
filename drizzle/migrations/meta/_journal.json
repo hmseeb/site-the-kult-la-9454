@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789172762968,
+      "tag": "0000_add_event_image_url",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793120038441,
+      "tag": "0001_stable_event_slugs_and_public_archives",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793120057960,
+      "tag": "0002_public_ticket_artwork_read_access",
+      "breakpoints": true
+    }
+  ]
+}

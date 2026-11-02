@@ -1,4 +1,7 @@
 {
+  "framework": null,
+  "installCommand": "rm -rf node_modules && bun install --frozen-lockfile",
+  "buildCommand": "NITRO_PRESET=vercel bun run build",
   "redirects": [
     {
       "source": "/admin",

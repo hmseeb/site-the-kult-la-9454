@@ -1,0 +1,7 @@
+- [x] Build a dedicated private venue-rental landing page with approved photos and focused navigation.
+- [x] Connect short inquiries to GHL and add privacy-safe conversion events.
+- [x] Verify desktop/mobile calls, form validation, submission and page health.
+- [x] Apply required package security update.
+- [x] Correct event-type headings and strengthen homepage search metadata.
+- [x] Add stable descriptive event links, retained past-event pages, and event schema.
+- [x] Verify sitemap, page status codes, search tags, and carousel loading.

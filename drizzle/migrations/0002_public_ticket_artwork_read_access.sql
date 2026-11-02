@@ -1,0 +1,1 @@
+CREATE POLICY "Public can read published ticket artwork" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'event-images' AND EXISTS (SELECT 1 FROM public.events WHERE events.image_url = storage.objects.name));

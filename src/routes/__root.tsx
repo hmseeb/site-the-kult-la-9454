@@ -130,7 +130,8 @@ function RootShell({ children }: { children: ReactNode }) {
           data-widget-id="6a88b2e207754ad08a366261"
         ></script>
         <Scripts />
-      </body>
+      <p data-lv-review="1" style={{ textAlign: "center", margin: "24px 0" }}><a href="/review">Leave us a review</a></p>
+</body>
     </html>
   );
 }
